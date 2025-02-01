@@ -5,13 +5,13 @@ public class SnowflakeService
 {
     private readonly IConfiguration _config;
     private readonly string _connectionString;
-    private readonly string _privateKeyPath;
+    private readonly string? _privateKey;
 
     public SnowflakeService(IConfiguration config)
     {
         _config = config;
         _connectionString = _config.GetConnectionString("Snowflake") ?? throw new Exception("Snowflake connection string not found.");
-        _privateKeyPath = Path.Combine(Directory.GetCurrentDirectory(), "rsa_key.p8");
+        _privateKey = _config["Snowflake:PrivateKey"];
     }
 
     // 🔹 Generic method to get a connection (Key Pair)
@@ -19,10 +19,10 @@ public class SnowflakeService
     {
         var conn = new SnowflakeDbConnection();
 
-        if (!File.Exists(_privateKeyPath))
-            throw new FileNotFoundException("Private key file not found.", _privateKeyPath);
+        if (string.IsNullOrEmpty(_privateKey))
+            throw new Exception("Private key not found in environment variables.");
 
-        conn.ConnectionString = $"{_connectionString};AUTHENTICATOR=snowflake_jwt;PRIVATE_KEY_FILE={_privateKeyPath}";
+        conn.ConnectionString = $"{_connectionString};AUTHENTICATOR=snowflake_jwt;PRIVATE_KEY={_privateKey}";
         conn.Open();
         return conn;
     }

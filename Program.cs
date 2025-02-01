@@ -52,7 +52,7 @@ else
     app.UseHttpsRedirection(); // Enable locally
 }
 
-app.MapGet("/", () => "Hello from Railway!");
+//app.MapGet("/", () => "Hello from Railway!");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
