@@ -16,6 +16,18 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
+// Remove HTTPS redirection when running on Railway
+if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("PORT")))
+{
+    Console.WriteLine("Running on Railway - Skipping HTTPS Redirection");
+}
+else
+{
+    app.UseHttpsRedirection(); // Enable locally
+}
+
+app.MapGet("/", () => "Hello from Railway!");
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
