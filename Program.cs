@@ -1,5 +1,11 @@
 var builder = WebApplication.CreateBuilder(args);
 
+#if (RELEASE)
+    var port = Environment.GetEnvironmentVariable("PORT") ?? "8081"; // Default to 8080 if PORT is not set
+    builder.WebHost.UseUrls($"http://*:{port}");
+#endif
+
+
 // Add services to the container.
 builder.Services.AddSingleton<SnowflakeService>();
 
