@@ -16,6 +16,19 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
+// Enable Swagger for Production (Railway)
+if (app.Environment.IsDevelopment() || !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("PORT")))
+{
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+        c.RoutePrefix = string.Empty; // Serve Swagger at root
+    });
+
+    Console.WriteLine("Swagger enabled in Railway.");
+}
+
 // Remove HTTPS redirection when running on Railway
 if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("PORT")))
 {
