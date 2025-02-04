@@ -12,48 +12,51 @@ public class SnowflakeService
         _config = config;
         _connectionString = _config.GetConnectionString("Snowflake") ?? throw new Exception("Snowflake connection string not found.");
         _privateKey = _config["Snowflake:PrivateKey"];
-    }
-
-    // 🔹 Generic method to get a connection (Key Pair)
-    public IDbConnection GetConnection()
-    {
-        var conn = new SnowflakeDbConnection();
 
         if (string.IsNullOrEmpty(_privateKey))
+        {
             throw new Exception("Private key not found in environment variables.");
+        }
+    }
 
-        conn.ConnectionString = $"{_connectionString};AUTHENTICATOR=snowflake_jwt;PRIVATE_KEY={_privateKey}";
-        conn.Open();
+    // 🔹 Get Snowflake connection (Async)
+    private async Task<SnowflakeDbConnection> GetConnectionAsync()
+    {
+        var conn = new SnowflakeDbConnection
+        {
+            ConnectionString = $"{_connectionString};AUTHENTICATOR=snowflake_jwt;PRIVATE_KEY={_privateKey}"
+        };
+
+        await conn.OpenAsync();
         return conn;
     }
 
-    // 🔹 Execute Query & Return Results
-    public List<Dictionary<string, object>> ExecuteQuery(string sql)
+    // 🔹 Execute Query & Return Results (Async)
+    public async Task<List<Dictionary<string, object>>> ExecuteQueryAsync(string sql)
     {
-        using (var conn = GetConnection())
-        using (var cmd = conn.CreateCommand())
+        var results = new List<Dictionary<string, object>>();
+
+        await using var conn = await GetConnectionAsync();
+        await using var cmd = conn.CreateCommand();
+
+        // Use correct syntax for Snowflake database switch
+        cmd.CommandText = "USE OUTREACHGENIUS_DRIPS;";
+        await cmd.ExecuteNonQueryAsync();
+
+        // Execute actual query
+        cmd.CommandText = sql;
+        await using var reader = await cmd.ExecuteReaderAsync();
+
+        while (await reader.ReadAsync())
         {
-
-            cmd.CommandText = "USE DATABASE OUTREACHGENIUS_DRIPS;";
-            cmd.ExecuteNonQuery();
-
-            cmd.CommandText = sql;
-            var results = new List<Dictionary<string, object>>();
-
-            using (var reader = cmd.ExecuteReader())
+            var row = new Dictionary<string, object>();
+            for (int i = 0; i < reader.FieldCount; i++)
             {
-                while (reader.Read())
-                {
-                    var row = new Dictionary<string, object>();
-                    for (int i = 0; i < reader.FieldCount; i++)
-                    {
-                        row[reader.GetName(i)] = reader.GetValue(i);
-                    }
-                    results.Add(row);
-                }
+                row[reader.GetName(i)] = await reader.GetFieldValueAsync<object>(i);
             }
-
-            return results;
+            results.Add(row);
         }
+
+        return results;
     }
 }

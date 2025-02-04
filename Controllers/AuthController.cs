@@ -15,11 +15,11 @@ namespace SnowflakeTest.Controllers
 
         // 🔹 Query Snowflake using Key Pair Auth
         [HttpGet("GetLineItemData")]
-        public IActionResult GetDataAsync()
+        public async Task<IActionResult> GetDataAsync()
         {
             try
             {
-                var results = _snowflakeService.ExecuteQuery("SELECT TOP 10 * FROM SHEET1.campaign");
+                var results = await _snowflakeService.ExecuteQueryAsync("SELECT TOP 10 * FROM SHEET1.campaign");
                 return Ok(new { data = results });
             }
             catch (Exception ex)
