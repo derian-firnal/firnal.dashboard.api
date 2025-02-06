@@ -1,3 +1,9 @@
+using firnal.dashboard.data;
+using firnal.dashboard.repositories;
+using firnal.dashboard.repositories.Interfaces;
+using firnal.dashboard.services;
+using firnal.dashboard.services.Interfaces;
+
 var builder = WebApplication.CreateBuilder(args);
 
 #if (RELEASE)
@@ -7,7 +13,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 
 // Add services to the container.
-builder.Services.AddSingleton<SnowflakeService>();
+builder.Services.AddSingleton<SnowflakeDbConnectionFactory>();
+builder.Services.AddScoped<ICampaignRepository, CampaignRepository>();
+builder.Services.AddScoped<ICampaignService, CampaignService>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
