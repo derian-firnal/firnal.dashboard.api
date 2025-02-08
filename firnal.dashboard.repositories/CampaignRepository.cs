@@ -13,24 +13,14 @@ namespace firnal.dashboard.repositories
             _dbFactory = dbFactory;
         }
 
-        public Task<int> AddAsync(Campaign entity)
+        public async Task<List<CampaignUserDetails>> GetCampaignUserDetailsAsync()
         {
-            throw new NotImplementedException();
-        }
+            using var conn = _dbFactory.GetConnection();
 
-        public Task<int> DeleteAsync(int id)
-        {
-            throw new NotImplementedException();
-        }
+            var sql = "SELECT first_name, last_name, personal_phone, gender, age_range, income_range, net_worth FROM OUTREACHGENIUS_DRIPS.SHEET1.campaign";
+            var result = await conn.QueryAsync<CampaignUserDetails>(sql);
 
-        public Task<IEnumerable<Campaign>> GetAllAsync()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<Campaign> GetByIdAsync(int id)
-        {
-            throw new NotImplementedException();
+            return result.ToList();
         }
 
         public async Task<int> GetTodaysUsersCountAsync()
@@ -38,11 +28,6 @@ namespace firnal.dashboard.repositories
             using var conn = _dbFactory.GetConnection();
 
             return await conn.ExecuteScalarAsync<int>("SELECT count(distinct first_name, last_name) FROM OUTREACHGENIUS_DRIPS.SHEET1.campaign");
-        }
-
-        public Task<int> UpdateAsync(Campaign entity)
-        {
-            throw new NotImplementedException();
         }
     }
 }

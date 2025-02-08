@@ -23,5 +23,12 @@ namespace firnal.dashboard.api.Controllers
             var count = await _campaignService.GetTodaysUsersCountAsync();
             return Ok(new { count });
         }
+
+        [HttpGet("GetCampaignUserDetails")]
+        public async Task<IActionResult> GetCampaignUserDetails()
+        {
+            var campaignUserDetails = await _campaignService.GetCampaignUserDetailsAsync();
+            return Ok(campaignUserDetails);
+        }
     }
 }
