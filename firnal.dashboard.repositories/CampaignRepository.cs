@@ -7,6 +7,7 @@ namespace firnal.dashboard.repositories
     public class CampaignRepository : ICampaignRepository
     {
         private readonly SnowflakeDbConnectionFactory _dbFactory;
+        private const string Schema = "OUTREACHGENIUS_DRIPS.filterbuy";
 
         public CampaignRepository(SnowflakeDbConnectionFactory dbFactory)
         {
@@ -17,7 +18,7 @@ namespace firnal.dashboard.repositories
         {
             using var conn = _dbFactory.GetConnection();
 
-            var sql = "SELECT first_name, last_name, personal_phone, gender, age_range, income_range, net_worth FROM OUTREACHGENIUS_DRIPS.SHEET1.campaign";
+            var sql = $"SELECT first_name, last_name, personal_phone, gender, age_range, income_range, net_worth FROM {Schema}.campaign";
             var result = await conn.QueryAsync<CampaignUserDetails>(sql);
 
             return result.ToList();
@@ -27,12 +28,12 @@ namespace firnal.dashboard.repositories
         {
             using var conn = _dbFactory.GetConnection();
 
-            var sql = @"SELECT 
+            var sql = @$"SELECT 
                             TRY_CAST(c.personal_zip AS INTEGER) AS personal_zip, 
                             z.latitude, 
                             z.longitude, 
                             count(*) as zip_count 
-                        FROM OUTREACHGENIUS_DRIPS.sheet1.campaign c
+                        FROM {Schema}.campaign c
                         INNER JOIN OUTREACHGENIUS_DRIPS.public.zipcodes z 
                             ON TRY_CAST(c.personal_zip AS INTEGER) = z.postal_code
                         WHERE c.personal_zip IS NOT NULL AND c.personal_zip != ''
@@ -48,7 +49,7 @@ namespace firnal.dashboard.repositories
         {
             using var conn = _dbFactory.GetConnection();
 
-            return await conn.ExecuteScalarAsync<int>("SELECT count(distinct first_name, last_name) FROM OUTREACHGENIUS_DRIPS.SHEET1.campaign");
+            return await conn.ExecuteScalarAsync<int>($"SELECT count(distinct first_name, last_name) FROM {Schema}.campaign");
         }
     }
 }
