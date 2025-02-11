@@ -56,7 +56,7 @@ namespace firnal.dashboard.repositories
         {
             using var conn = _dbFactory.GetConnection();
 
-            var result = await conn.QueryAsync<Campaign>($"SELECT top 10* FROM {Schema}.campaign");
+            var result = await conn.QueryAsync<Campaign>($"SELECT * FROM {Schema}.campaign");
 
             return result.ToList();
         }
