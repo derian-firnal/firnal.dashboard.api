@@ -6,5 +6,6 @@ namespace firnal.dashboard.repositories.Interfaces
     {
         Task<int> GetTodaysUsersCountAsync();
         Task<List<CampaignUserDetails>> GetCampaignUserDetailsAsync();
+        Task<List<Heatmap>> GetDistinctZips();
     }
 }

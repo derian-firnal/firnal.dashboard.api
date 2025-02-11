@@ -18,6 +18,11 @@ namespace firnal.dashboard.services
             return await _campaignRepository.GetCampaignUserDetailsAsync();
         }
 
+        public async Task<List<Heatmap>> GetDistinctZips()
+        {
+            return await _campaignRepository.GetDistinctZips();
+        }
+
         public async Task<int> GetTodaysUsersCountAsync()
         {
             return await _campaignRepository.GetTodaysUsersCountAsync();

@@ -23,6 +23,27 @@ namespace firnal.dashboard.repositories
             return result.ToList();
         }
 
+        public async Task<List<Heatmap>> GetDistinctZips()
+        {
+            using var conn = _dbFactory.GetConnection();
+
+            var sql = @"SELECT 
+                            TRY_CAST(c.personal_zip AS INTEGER) AS personal_zip, 
+                            z.latitude, 
+                            z.longitude, 
+                            count(*) as zip_count 
+                        FROM OUTREACHGENIUS_DRIPS.sheet1.campaign c
+                        INNER JOIN OUTREACHGENIUS_DRIPS.public.zipcodes z 
+                            ON TRY_CAST(c.personal_zip AS INTEGER) = z.postal_code
+                        WHERE c.personal_zip IS NOT NULL AND c.personal_zip != ''
+                        GROUP BY TRY_CAST(c.personal_zip as integer), z.latitude, z.longitude
+                        ORDER BY zip_count DESC;";
+
+            var result = await conn.QueryAsync<Heatmap>(sql);
+
+            return result.ToList();
+        }
+
         public async Task<int> GetTodaysUsersCountAsync()
         {
             using var conn = _dbFactory.GetConnection();
