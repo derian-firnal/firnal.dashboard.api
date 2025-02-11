@@ -13,6 +13,11 @@ namespace firnal.dashboard.services
             _campaignRepository = campaignRepository;
         }
 
+        public async Task<List<Campaign>> GetAll()
+        {
+            return await _campaignRepository.GetAll();
+        }
+
         public async Task<List<CampaignUserDetails>> GetCampaignUserDetailsAsync()
         {
             return await _campaignRepository.GetCampaignUserDetailsAsync();
