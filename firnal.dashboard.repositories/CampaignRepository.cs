@@ -7,7 +7,7 @@ namespace firnal.dashboard.repositories
     public class CampaignRepository : ICampaignRepository
     {
         private readonly SnowflakeDbConnectionFactory _dbFactory;
-        private const string Schema = "OUTREACHGENIUS_DRIPS.filterbuy";
+        private const string Schema = "OUTREACHGENIUS_DRIPS.fides";
 
         public CampaignRepository(SnowflakeDbConnectionFactory dbFactory)
         {
@@ -50,6 +50,15 @@ namespace firnal.dashboard.repositories
             using var conn = _dbFactory.GetConnection();
 
             return await conn.ExecuteScalarAsync<int>($"SELECT count(distinct first_name, last_name) FROM {Schema}.campaign");
+        }
+
+        public async Task<List<Campaign>> GetAll()
+        {
+            using var conn = _dbFactory.GetConnection();
+
+            var result = await conn.QueryAsync<Campaign>($"SELECT top 10* FROM {Schema}.campaign");
+
+            return result.ToList();
         }
     }
 }

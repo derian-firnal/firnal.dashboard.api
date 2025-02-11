@@ -37,5 +37,12 @@ namespace firnal.dashboard.api.Controllers
             var zips = await _campaignService.GetDistinctZips();
             return Ok(zips);
         }
+
+        [HttpGet("GetAll")]
+        public async Task<IActionResult> GetAll()
+        {
+            var all = await _campaignService.GetAll();
+            return Ok(all);
+        }
     }
 }
