@@ -30,5 +30,12 @@ namespace firnal.dashboard.api.Controllers
             var campaignUserDetails = await _campaignService.GetCampaignUserDetailsAsync();
             return Ok(campaignUserDetails);
         }
+
+        [HttpGet("GetZips")]
+        public async Task<IActionResult> GetZips()
+        {
+            var zips = await _campaignService.GetDistinctZips();
+            return Ok(zips);
+        }
     }
 }
