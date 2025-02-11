@@ -1,5 +1,6 @@
 ﻿using firnal.dashboard.services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Org.BouncyCastle.Utilities;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -42,7 +43,9 @@ namespace firnal.dashboard.api.Controllers
         public async Task<IActionResult> GetAll()
         {
             var all = await _campaignService.GetAll();
-            return Ok(all);
+            
+            // Return CSV file as a response
+            return File(all, "text/csv", "campaign_data.csv");
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using firnal.dashboard.data;
 using firnal.dashboard.repositories.Interfaces;
 using firnal.dashboard.services.Interfaces;
+using System.Text;
 
 namespace firnal.dashboard.services
 {
@@ -13,9 +14,30 @@ namespace firnal.dashboard.services
             _campaignRepository = campaignRepository;
         }
 
-        public async Task<List<Campaign>> GetAll()
+        public async Task<byte[]> GetAll()
         {
-            return await _campaignRepository.GetAll();
+            var result = await _campaignRepository.GetAll();
+
+            // Convert list to CSV format
+            var csv = new StringBuilder();
+
+            // Get headers dynamically from the Campaign class properties
+            var properties = typeof(Campaign).GetProperties();
+            csv.AppendLine(string.Join(",", properties.Select(p => p.Name)));
+
+            // Append data rows
+            foreach (var campaign in result)
+            {
+                var values = properties.Select(p =>
+                    p.GetValue(campaign, null)?.ToString()?.Replace(",", " ") ?? ""
+                );
+                csv.AppendLine(string.Join(",", values));
+            }
+
+            // Convert CSV to byte array
+            var bytes = Encoding.UTF8.GetBytes(csv.ToString());
+
+            return bytes;
         }
 
         public async Task<List<CampaignUserDetails>> GetCampaignUserDetailsAsync()
