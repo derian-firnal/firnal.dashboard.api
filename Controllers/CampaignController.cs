@@ -19,9 +19,9 @@ namespace firnal.dashboard.api.Controllers
 
         // GET: api/<ValuesController>
         [HttpGet("GetTodaysUsers")]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> Get(string schemaName)
         {
-            var count = await _campaignService.GetTodaysUsersCountAsync();
+            var count = await _campaignService.GetTodaysUsersCountAsync(schemaName);
             return Ok(new { count });
         }
 
@@ -40,9 +40,9 @@ namespace firnal.dashboard.api.Controllers
         }
 
         [HttpGet("GetAll")]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll(string schemaName)
         {
-            var all = await _campaignService.GetAll();
+            var all = await _campaignService.GetAll(schemaName);
 
             // Return CSV file as a response
             Response.Headers["Content-Disposition"] = "attachment; filename=campaign_data.csv";

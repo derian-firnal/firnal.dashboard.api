@@ -14,9 +14,9 @@ namespace firnal.dashboard.services
             _campaignRepository = campaignRepository;
         }
 
-        public async Task<byte[]> GetAll()
+        public async Task<byte[]> GetAll(string schemaName)
         {
-            var result = await _campaignRepository.GetAll();
+            var result = await _campaignRepository.GetAll(schemaName);
 
             // Convert list to CSV format
             var csv = new StringBuilder();
@@ -50,9 +50,9 @@ namespace firnal.dashboard.services
             return await _campaignRepository.GetDistinctZips(schemaName);
         }
 
-        public async Task<int> GetTodaysUsersCountAsync()
+        public async Task<int> GetTodaysUsersCountAsync(string schemaName)
         {
-            return await _campaignRepository.GetTodaysUsersCountAsync();
+            return await _campaignRepository.GetTodaysUsersCountAsync(schemaName);
         }
     }
 }

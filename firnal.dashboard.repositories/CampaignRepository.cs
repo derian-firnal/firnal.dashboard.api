@@ -46,18 +46,18 @@ namespace firnal.dashboard.repositories
             return result.ToList();
         }
 
-        public async Task<int> GetTodaysUsersCountAsync()
+        public async Task<int> GetTodaysUsersCountAsync(string schemaName)
         {
             using var conn = _dbFactory.GetConnection();
 
-            return await conn.ExecuteScalarAsync<int>($"SELECT count(distinct first_name, last_name) FROM {DbName}.{Schema}.campaign");
+            return await conn.ExecuteScalarAsync<int>($"SELECT count(distinct first_name, last_name) FROM {DbName}.{schemaName}.campaign");
         }
 
-        public async Task<List<Campaign>> GetAll()
+        public async Task<List<Campaign>> GetAll(string schemaName)
         {
             using var conn = _dbFactory.GetConnection();
 
-            var result = await conn.QueryAsync<Campaign>($"SELECT * FROM {DbName}.{Schema}.campaign");
+            var result = await conn.QueryAsync<Campaign>($"SELECT * FROM {DbName}.{schemaName}.campaign");
 
             return result.ToList();
         }
