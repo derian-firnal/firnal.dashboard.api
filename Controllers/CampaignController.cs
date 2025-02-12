@@ -18,10 +18,10 @@ namespace firnal.dashboard.api.Controllers
         }
 
         // GET: api/<ValuesController>
-        [HttpGet("GetTodaysUsers")]
+        [HttpGet("GetTotalUsersAsync")]
         public async Task<IActionResult> Get(string schemaName)
         {
-            var count = await _campaignService.GetTodaysUsersCountAsync(schemaName);
+            var count = await _campaignService.GetTotalUsersAsync(schemaName);
             return Ok(new { count });
         }
 
@@ -47,6 +47,13 @@ namespace firnal.dashboard.api.Controllers
             // Return CSV file as a response
             Response.Headers["Content-Disposition"] = "attachment; filename=campaign_data.csv";
             return File(all, "text/csv", "campaign_data.csv");
+        }
+
+        [HttpGet("GetNewUsers")]
+        public async Task<IActionResult> GetNewUsers(string schemaName)
+        {
+            var newUsers = await _campaignService.GetNewUsersAsync(schemaName);
+            return Ok(newUsers);
         }
     }
 }

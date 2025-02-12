@@ -50,9 +50,14 @@ namespace firnal.dashboard.services
             return await _campaignRepository.GetDistinctZips(schemaName);
         }
 
-        public async Task<int> GetTodaysUsersCountAsync(string schemaName)
+        public async Task<int> GetNewUsersAsync(string schemaName)
         {
-            return await _campaignRepository.GetTodaysUsersCountAsync(schemaName);
+            return await _campaignRepository.GetNewUsersAsync(schemaName);
+        }
+
+        public async Task<int> GetTotalUsersAsync(string schemaName)
+        {
+            return await _campaignRepository.GetTotalUsersAsync(schemaName);
         }
     }
 }

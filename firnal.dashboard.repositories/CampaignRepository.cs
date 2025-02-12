@@ -46,7 +46,7 @@ namespace firnal.dashboard.repositories
             return result.ToList();
         }
 
-        public async Task<int> GetTodaysUsersCountAsync(string schemaName)
+        public async Task<int> GetTotalUsersAsync(string schemaName)
         {
             using var conn = _dbFactory.GetConnection();
 
@@ -60,6 +60,21 @@ namespace firnal.dashboard.repositories
             var result = await conn.QueryAsync<Campaign>($"SELECT * FROM {DbName}.{schemaName}.campaign");
 
             return result.ToList();
+        }
+
+        public async Task<int> GetNewUsersAsync(string schemaName)
+        {
+            using var conn = _dbFactory.GetConnection();
+
+            var sql = $@"
+                SELECT COUNT(distinct first_name, last_name) 
+                FROM {DbName}.{schemaName}.campaign 
+                WHERE TO_DATE(SUBSTR(""timestamp_incoming_webhook"", 1, 10), 'DD/MM/YYYY') = CURRENT_DATE;
+            ";
+
+            var result = await conn.ExecuteScalarAsync<int>(sql);
+
+            return result;
         }
     }
 }
