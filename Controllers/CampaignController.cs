@@ -33,9 +33,9 @@ namespace firnal.dashboard.api.Controllers
         }
 
         [HttpGet("GetZips")]
-        public async Task<IActionResult> GetZips()
+        public async Task<IActionResult> GetZips(string schemaName)
         {
-            var zips = await _campaignService.GetDistinctZips();
+            var zips = await _campaignService.GetDistinctZips(schemaName);
             return Ok(zips);
         }
 

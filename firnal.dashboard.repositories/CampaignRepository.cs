@@ -25,7 +25,7 @@ namespace firnal.dashboard.repositories
             return result.ToList();
         }
 
-        public async Task<List<Heatmap>> GetDistinctZips()
+        public async Task<List<Heatmap>> GetDistinctZips(string schemaName)
         {
             using var conn = _dbFactory.GetConnection();
 
@@ -34,7 +34,7 @@ namespace firnal.dashboard.repositories
                             z.latitude, 
                             z.longitude, 
                             count(*) as zip_count 
-                        FROM {DbName}.{Schema}.campaign c
+                        FROM {DbName}.{schemaName}.campaign c
                         INNER JOIN OUTREACHGENIUS_DRIPS.public.zipcodes z 
                             ON TRY_CAST(c.personal_zip AS INTEGER) = z.postal_code
                         WHERE c.personal_zip IS NOT NULL AND c.personal_zip != ''
