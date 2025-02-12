@@ -43,8 +43,9 @@ namespace firnal.dashboard.api.Controllers
         public async Task<IActionResult> GetAll()
         {
             var all = await _campaignService.GetAll();
-            
+
             // Return CSV file as a response
+            Response.Headers["Content-Disposition"] = "attachment; filename=campaign_data.csv";
             return File(all, "text/csv", "campaign_data.csv");
         }
     }
