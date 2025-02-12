@@ -5,7 +5,7 @@ namespace firnal.dashboard.repositories.Interfaces
     public interface ICampaignRepository
     {
         Task<int> GetTodaysUsersCountAsync();
-        Task<List<CampaignUserDetails>> GetCampaignUserDetailsAsync();
+        Task<List<CampaignUserDetails>> GetCampaignUserDetailsAsync(string schemaName);
         Task<List<Heatmap>> GetDistinctZips();
         Task<List<Campaign>> GetAll();
     }

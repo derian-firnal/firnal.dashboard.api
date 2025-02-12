@@ -26,9 +26,9 @@ namespace firnal.dashboard.api.Controllers
         }
 
         [HttpGet("GetCampaignUserDetails")]
-        public async Task<IActionResult> GetCampaignUserDetails()
+        public async Task<IActionResult> GetCampaignUserDetails(string schemaName)
         {
-            var campaignUserDetails = await _campaignService.GetCampaignUserDetailsAsync();
+            var campaignUserDetails = await _campaignService.GetCampaignUserDetailsAsync(schemaName);
             return Ok(campaignUserDetails);
         }
 

@@ -40,9 +40,9 @@ namespace firnal.dashboard.services
             return bytes;
         }
 
-        public async Task<List<CampaignUserDetails>> GetCampaignUserDetailsAsync()
+        public async Task<List<CampaignUserDetails>> GetCampaignUserDetailsAsync(string schemaName)
         {
-            return await _campaignRepository.GetCampaignUserDetailsAsync();
+            return await _campaignRepository.GetCampaignUserDetailsAsync(schemaName);
         }
 
         public async Task<List<Heatmap>> GetDistinctZips()

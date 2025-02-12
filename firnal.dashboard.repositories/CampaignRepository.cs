@@ -7,18 +7,19 @@ namespace firnal.dashboard.repositories
     public class CampaignRepository : ICampaignRepository
     {
         private readonly SnowflakeDbConnectionFactory _dbFactory;
-        private const string Schema = "OUTREACHGENIUS_DRIPS.fides";
+        private const string DbName = "OUTREACHGENIUS_DRIPS";
+        private const string Schema = "fides";
 
         public CampaignRepository(SnowflakeDbConnectionFactory dbFactory)
         {
             _dbFactory = dbFactory;
         }
 
-        public async Task<List<CampaignUserDetails>> GetCampaignUserDetailsAsync()
+        public async Task<List<CampaignUserDetails>> GetCampaignUserDetailsAsync(string schemaName)
         {
             using var conn = _dbFactory.GetConnection();
 
-            var sql = $"SELECT first_name, last_name, personal_phone, gender, age_range, income_range, net_worth FROM {Schema}.campaign";
+            var sql = $"SELECT first_name, last_name, personal_phone, gender, age_range, income_range, net_worth FROM {DbName}.{schemaName}.campaign";
             var result = await conn.QueryAsync<CampaignUserDetails>(sql);
 
             return result.ToList();
@@ -33,7 +34,7 @@ namespace firnal.dashboard.repositories
                             z.latitude, 
                             z.longitude, 
                             count(*) as zip_count 
-                        FROM {Schema}.campaign c
+                        FROM {DbName}.{Schema}.campaign c
                         INNER JOIN OUTREACHGENIUS_DRIPS.public.zipcodes z 
                             ON TRY_CAST(c.personal_zip AS INTEGER) = z.postal_code
                         WHERE c.personal_zip IS NOT NULL AND c.personal_zip != ''
@@ -49,14 +50,14 @@ namespace firnal.dashboard.repositories
         {
             using var conn = _dbFactory.GetConnection();
 
-            return await conn.ExecuteScalarAsync<int>($"SELECT count(distinct first_name, last_name) FROM {Schema}.campaign");
+            return await conn.ExecuteScalarAsync<int>($"SELECT count(distinct first_name, last_name) FROM {DbName}.{Schema}.campaign");
         }
 
         public async Task<List<Campaign>> GetAll()
         {
             using var conn = _dbFactory.GetConnection();
 
-            var result = await conn.QueryAsync<Campaign>($"SELECT * FROM {Schema}.campaign");
+            var result = await conn.QueryAsync<Campaign>($"SELECT * FROM {DbName}.{Schema}.campaign");
 
             return result.ToList();
         }
