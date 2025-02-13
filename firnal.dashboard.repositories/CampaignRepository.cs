@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using firnal.dashboard.data;
 using firnal.dashboard.repositories.Interfaces;
+using System.Linq.Expressions;
 
 namespace firnal.dashboard.repositories
 {
@@ -64,17 +65,24 @@ namespace firnal.dashboard.repositories
 
         public async Task<int> GetNewUsersAsync(string schemaName)
         {
-            using var conn = _dbFactory.GetConnection();
+            try
+            {
+                using var conn = _dbFactory.GetConnection();
 
-            var sql = $@"
+                var sql = $@"
                 SELECT COUNT(distinct first_name, last_name) 
                 FROM {DbName}.{schemaName}.campaign 
-                WHERE TO_DATE(SUBSTR(""timestamp_incoming_webhook"", 1, 10), 'DD/MM/YYYY') = CURRENT_DATE;
-            ";
+                WHERE TO_DATE(SUBSTR(""timestamp_incoming_webhook"", 1, 10), 'DD/MM/YYYY') = CURRENT_DATE;";
 
-            var result = await conn.ExecuteScalarAsync<int>(sql);
+                var result = await conn.ExecuteScalarAsync<int>(sql);
 
-            return result;
+                return result;
+            }
+            catch
+            {
+                return 0;
+            }
+
         }
     }
 }

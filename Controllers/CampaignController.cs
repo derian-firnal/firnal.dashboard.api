@@ -25,6 +25,13 @@ namespace firnal.dashboard.api.Controllers
             return Ok(new { count });
         }
 
+        [HttpGet("GetNewUsers")]
+        public async Task<IActionResult> GetNewUsers(string schemaName)
+        {
+            var newUsers = await _campaignService.GetNewUsersAsync(schemaName);
+            return Ok(newUsers);
+        }
+
         [HttpGet("GetCampaignUserDetails")]
         public async Task<IActionResult> GetCampaignUserDetails(string schemaName)
         {
@@ -47,13 +54,6 @@ namespace firnal.dashboard.api.Controllers
             // Return CSV file as a response
             Response.Headers["Content-Disposition"] = "attachment; filename=campaign_data.csv";
             return File(all, "text/csv", "campaign_data.csv");
-        }
-
-        [HttpGet("GetNewUsers")]
-        public async Task<IActionResult> GetNewUsers(string schemaName)
-        {
-            var newUsers = await _campaignService.GetNewUsersAsync(schemaName);
-            return Ok(newUsers);
         }
     }
 }
