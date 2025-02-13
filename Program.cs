@@ -11,6 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
     builder.WebHost.UseUrls($"http://*:{port}");
 #endif
 
+builder.Services.AddMemoryCache();
 
 // Add services to the container.
 builder.Services.AddSingleton<SnowflakeDbConnectionFactory>();
