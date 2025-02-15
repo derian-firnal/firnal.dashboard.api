@@ -55,5 +55,12 @@ namespace firnal.dashboard.api.Controllers
             Response.Headers["Content-Disposition"] = "attachment; filename=campaign_data.csv";
             return File(all, "text/csv", "campaign_data.csv");
         }
+
+        [HttpGet("GetNewUsersOverPast7Days")]
+        public async Task<IActionResult> GetNewUsersOverPast7Days(string schemaName)
+        {
+            var users = await _campaignService.GetNewUsersOverPast7Days(schemaName);
+            return Ok(users);
+        }
     }
 }

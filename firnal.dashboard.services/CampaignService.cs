@@ -55,6 +55,11 @@ namespace firnal.dashboard.services
             return await _campaignRepository.GetNewUsersAsync(schemaName);
         }
 
+        public async Task<List<UsageData>> GetNewUsersOverPast7Days(string schemaName)
+        {
+            return await _campaignRepository.GetNewUsersOverPast7Days(schemaName);
+        }
+
         public async Task<int> GetTotalUsersAsync(string schemaName)
         {
             return await _campaignRepository.GetTotalUsersAsync(schemaName);

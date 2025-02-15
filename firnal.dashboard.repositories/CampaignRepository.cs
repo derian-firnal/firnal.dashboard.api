@@ -124,5 +124,39 @@ namespace firnal.dashboard.repositories
                 return 0;
             }
         }
+
+        public async Task<List<UsageData>> GetNewUsersOverPast7Days(string schemaName)
+        {
+            string cacheKey = $"NewUsersOverPast7Days_{schemaName}";
+            if (_cache.TryGetValue(cacheKey, out List<UsageData>? cachedUsersOver7Days))
+            {
+                return cachedUsersOver7Days ?? new List<UsageData>();
+            }
+
+            try
+            {
+                // Define the SQL query with the provided schema name.
+                var query = $@"
+                            SELECT 
+                                TO_DATE(SUBSTR(""timestamp_incoming_webhook"", 1, 10), 'DD/MM/YYYY') AS UsageDate,
+                                COUNT(DISTINCT first_name, last_name) AS UsageCount
+                            FROM {DbName}.{schemaName}.campaign
+                            WHERE TO_DATE(SUBSTR(""timestamp_incoming_webhook"", 1, 10), 'DD/MM/YYYY')
+                                  BETWEEN CURRENT_DATE - 7 AND CURRENT_DATE
+                            GROUP BY TO_DATE(SUBSTR(""timestamp_incoming_webhook"", 1, 10), 'DD/MM/YYYY')
+                            ORDER BY UsageDate;
+                        ";
+
+                using var conn = _dbFactory.GetConnection();
+                var results = await conn.QueryAsync<UsageData>(query);
+                _cache.Set(cacheKey , results, GetCacheOptionsForMidnight());
+
+                return results.ToList();
+            }
+            catch
+            {
+                return new List<UsageData>();
+            }
+        }
     }
 }

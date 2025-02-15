@@ -9,5 +9,6 @@ namespace firnal.dashboard.services.Interfaces
         Task<List<Heatmap>> GetDistinctZips(string schemaName);
         Task<byte[]> GetAll(string schemaName);
         Task<int> GetNewUsersAsync(string schemaName);
+        Task<List<UsageData>> GetNewUsersOverPast7Days(string schemaName);
     }
 }
