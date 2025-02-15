@@ -29,10 +29,10 @@ namespace firnal.dashboard.repositories
         public async Task<List<CampaignUserDetails>> GetCampaignUserDetailsAsync(string schemaName)
         {
             string cacheKey = $"CampaignUserDetails_{schemaName}";
-            if (_cache.TryGetValue(cacheKey, out List<CampaignUserDetails>? cachedDetails) && cachedDetails != null)
-            {
-                return cachedDetails;
-            }
+            //if (_cache.TryGetValue(cacheKey, out List<CampaignUserDetails>? cachedDetails) && cachedDetails != null)
+            //{
+            //    return cachedDetails;
+            //}
 
             using var conn = _dbFactory.GetConnection();
             var sql = $"SELECT first_name, last_name, personal_phone, gender, age_range, income_range, net_worth FROM {DbName}.{schemaName}.campaign";
@@ -46,10 +46,10 @@ namespace firnal.dashboard.repositories
         public async Task<List<Heatmap>> GetDistinctZips(string schemaName)
         {
             string cacheKey = $"DistinctZips_{schemaName}";
-            if (_cache.TryGetValue(cacheKey, out List<Heatmap>? cachedZips) && cachedZips != null)
-            {
-                return cachedZips;
-            }
+            //if (_cache.TryGetValue(cacheKey, out List<Heatmap>? cachedZips) && cachedZips != null)
+            //{
+            //    return cachedZips;
+            //}
 
             using var conn = _dbFactory.GetConnection();
             var sql = @$"SELECT 
@@ -73,10 +73,10 @@ namespace firnal.dashboard.repositories
         public async Task<int> GetTotalUsersAsync(string schemaName)
         {
             string cacheKey = $"TotalUsers_{schemaName}";
-            if (_cache.TryGetValue(cacheKey, out int cachedTotal))
-            {
-                return cachedTotal;
-            }
+            //if (_cache.TryGetValue(cacheKey, out int cachedTotal))
+            //{
+            //    return cachedTotal;
+            //}
 
             using var conn = _dbFactory.GetConnection();
             int totalUsers = await conn.ExecuteScalarAsync<int>($"SELECT count(distinct first_name, last_name) FROM {DbName}.{schemaName}.campaign");
@@ -87,10 +87,10 @@ namespace firnal.dashboard.repositories
         public async Task<List<Campaign>> GetAll(string schemaName)
         {
             string cacheKey = $"AllCampaigns_{schemaName}";
-            if (_cache.TryGetValue(cacheKey, out List<Campaign>? cachedCampaigns) && cachedCampaigns != null)
-            {
-                return cachedCampaigns;
-            }
+            //if (_cache.TryGetValue(cacheKey, out List<Campaign>? cachedCampaigns) && cachedCampaigns != null)
+            //{
+            //    return cachedCampaigns;
+            //}
 
             using var conn = _dbFactory.GetConnection();
             var result = await conn.QueryAsync<Campaign>($"SELECT * FROM {DbName}.{schemaName}.campaign");
@@ -103,10 +103,10 @@ namespace firnal.dashboard.repositories
         public async Task<int> GetNewUsersAsync(string schemaName)
         {
             string cacheKey = $"NewUsers_{schemaName}";
-            if (_cache.TryGetValue(cacheKey, out int cachedNewUsers))
-            {
-                return cachedNewUsers;
-            }
+            //if (_cache.TryGetValue(cacheKey, out int cachedNewUsers))
+            //{
+            //    return cachedNewUsers;
+            //}
 
             try
             {
@@ -128,10 +128,10 @@ namespace firnal.dashboard.repositories
         public async Task<List<UsageData>> GetNewUsersOverPast7Days(string schemaName)
         {
             string cacheKey = $"NewUsersOverPast7Days_{schemaName}";
-            if (_cache.TryGetValue(cacheKey, out List<UsageData>? cachedUsersOver7Days))
-            {
-                return cachedUsersOver7Days ?? new List<UsageData>();
-            }
+            //if (_cache.TryGetValue(cacheKey, out List<UsageData>? cachedUsersOver7Days))
+            //{
+            //    return cachedUsersOver7Days ?? new List<UsageData>();
+            //}
 
             try
             {
