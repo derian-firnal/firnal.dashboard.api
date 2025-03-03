@@ -114,7 +114,7 @@ namespace firnal.dashboard.repositories
                 var sql = $@"
                 SELECT COUNT(distinct first_name, last_name) 
                 FROM {DbName}.{schemaName}.campaign 
-                WHERE TO_DATE(SUBSTR(""timestamp_incoming_webhook"", 1, 10), 'DD/MM/YYYY') = CURRENT_DATE;";
+                WHERE TO_DATE(SUBSTR(""created_at"", 1, 10), 'DD/MM/YYYY') = CURRENT_DATE;";
                 int newUsers = await conn.ExecuteScalarAsync<int>(sql);
                 _cache.Set(cacheKey, newUsers, GetCacheOptionsForMidnight());
                 return newUsers;
@@ -136,16 +136,17 @@ namespace firnal.dashboard.repositories
             try
             {
                 // Define the SQL query with the provided schema name.
-                var query = $@"
-                            SELECT 
-                                TO_DATE(SUBSTR(""timestamp_incoming_webhook"", 1, 10), 'DD/MM/YYYY') AS UsageDate,
-                                COUNT(DISTINCT first_name, last_name) AS UsageCount
-                            FROM {DbName}.{schemaName}.campaign
-                            WHERE TO_DATE(SUBSTR(""timestamp_incoming_webhook"", 1, 10), 'DD/MM/YYYY')
-                                  BETWEEN CURRENT_DATE - 7 AND CURRENT_DATE
-                            GROUP BY TO_DATE(SUBSTR(""timestamp_incoming_webhook"", 1, 10), 'DD/MM/YYYY')
-                            ORDER BY UsageDate;
-                        ";
+                var query = $@" SELECT 
+                                    TO_DATE(created_at) AS UsageDate,  -- Handles both 'YYYY-MM-DD' and full timestamp format
+                                    COUNT(DISTINCT first_name || last_name) AS UsageCount
+                                FROM 
+                                    {DbName}.{schemaName}.campaign
+                                WHERE 
+                                    TO_DATE(created_at) BETWEEN CURRENT_DATE - 7 AND CURRENT_DATE
+                                GROUP BY 
+                                    TO_DATE(created_at)
+                                ORDER BY 
+                                    UsageDate;";
 
                 using var conn = _dbFactory.GetConnection();
                 var results = await conn.QueryAsync<UsageData>(query);

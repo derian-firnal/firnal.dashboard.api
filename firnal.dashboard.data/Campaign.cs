@@ -1,6 +1,6 @@
 ﻿public class Campaign
 {
-    public DateTime Timestamp_Incoming_Webhook { get; set; }
+    public DateTime CREATED_AT { get; set; }
     public string? Category { get; set; }
     public string? Sub_Category { get; set; }
     public string? Topic { get; set; }
