@@ -112,9 +112,13 @@ namespace firnal.dashboard.repositories
             {
                 using var conn = _dbFactory.GetConnection();
                 var sql = $@"
-                SELECT COUNT(distinct first_name, last_name) 
-                FROM {DbName}.{schemaName}.campaign 
-                WHERE TO_DATE(SUBSTR(""created_at"", 1, 10), 'DD/MM/YYYY') = CURRENT_DATE;";
+                            SELECT
+                                COUNT(distinct first_name, last_name) 
+                            FROM 
+                                {DbName}.{schemaName}.campaign 
+                            WHERE 
+                                TO_DATE(SUBSTR(""created_at"", 1, 10), 'DD/MM/YYYY') = CURRENT_DATE;";
+                
                 int newUsers = await conn.ExecuteScalarAsync<int>(sql);
                 _cache.Set(cacheKey, newUsers, GetCacheOptionsForMidnight());
                 return newUsers;
