@@ -11,7 +11,6 @@ namespace firnal.dashboard.repositories
         private readonly SnowflakeDbConnectionFactory _dbFactory;
         private readonly IMemoryCache _cache;
         private const string DbName = "OUTREACHGENIUS_DRIPS";
-        private const string Schema = "fides";
 
         public CampaignRepository(SnowflakeDbConnectionFactory dbFactory, IMemoryCache cache)
         {
