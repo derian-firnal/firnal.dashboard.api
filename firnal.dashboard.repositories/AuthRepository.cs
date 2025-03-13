@@ -29,7 +29,7 @@ namespace firnal.dashboard.repositories
                     us.UserId as SchemaUserId, 
                     us.SchemaName
                 FROM {DbName}.{SchemaName}.Users u
-                LEFT JOIN {DbName}.{SchemaName}.UserSchema us ON u.Id = us.UserId
+                LEFT JOIN {DbName}.{SchemaName}.UserSchemas us ON u.Id = us.UserId
                 WHERE u.Email = :Email";
 
             // Use a dictionary to group User records and their associated UserSchema entries
