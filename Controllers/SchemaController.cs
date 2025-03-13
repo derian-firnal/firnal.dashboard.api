@@ -1,4 +1,5 @@
 ﻿using firnal.dashboard.services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -6,6 +7,7 @@ namespace firnal.dashboard.api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class SchemaController : ControllerBase
     {
         private readonly ISchemaService _schemaService;

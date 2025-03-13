@@ -1,5 +1,6 @@
 ﻿using firnal.dashboard.data;
 using firnal.dashboard.services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace firnal.dashboard.api.Controllers
@@ -7,6 +8,7 @@ namespace firnal.dashboard.api.Controllers
 
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class AuthController : ControllerBase
     {
         private readonly IAuthService _authService;
@@ -47,6 +49,7 @@ namespace firnal.dashboard.api.Controllers
         }
 
         [HttpPost("login")]
+        [AllowAnonymous]
         public async Task<IActionResult> Login([FromBody] LoginUserRequest request)
         {
             if (string.IsNullOrEmpty(request.Email) || string.IsNullOrEmpty(request.Password))
