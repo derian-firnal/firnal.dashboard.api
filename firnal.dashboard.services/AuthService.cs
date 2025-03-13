@@ -42,7 +42,8 @@ namespace firnal.dashboard.services
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id),
                 new Claim(ClaimTypes.Name, user.UserName ?? string.Empty),
-                new Claim(ClaimTypes.Email, user.Email ?? string.Empty)
+                new Claim(ClaimTypes.Email, user.Email ?? string.Empty),
+                new Claim(ClaimTypes.Role, user.RoleName ?? string.Empty)
             };
 
             // Add a claim for each schema the user has access to

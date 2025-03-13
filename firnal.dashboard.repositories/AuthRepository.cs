@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using firnal.dashboard.data;
 using firnal.dashboard.repositories.Interfaces;
+using Org.BouncyCastle.Asn1.X509;
 
 namespace firnal.dashboard.repositories
 {
@@ -18,55 +19,67 @@ namespace firnal.dashboard.repositories
         public async Task<User?> AuthenticateUser(string email, string password)
         {
             using var conn = _dbFactory.GetConnection();
-            
-            // SQL query using a LEFT JOIN to include any associated schemas.
+
+            // Updated query: selecting r.Id and r.Name without aliasing.
             string query = $@"
                 SELECT 
                     u.Id, 
                     u.UserName, 
                     u.Email, 
                     u.PasswordHash,
-                    us.UserId as SchemaUserId, 
-                    us.SchemaName
+                    us.UserId AS SchemaUserId, 
+                    us.SchemaName,
+                    r.Id,
+                    r.Name
                 FROM {DbName}.{SchemaName}.Users u
                 LEFT JOIN {DbName}.{SchemaName}.UserSchemas us ON u.Id = us.UserId
+                LEFT JOIN {DbName}.{SchemaName}.UserRoles ur ON u.Id = ur.UserId
+                LEFT JOIN {DbName}.{SchemaName}.Roles r ON ur.RoleId = r.Id
                 WHERE u.Email = :Email";
 
-            // Use a dictionary to group User records and their associated UserSchema entries
+            // Dictionary to group user rows (when a user has multiple schemas)
             var userDictionary = new Dictionary<string, User>();
 
-            var user = await conn.QueryAsync<User, UserSchema, User>(
+            var result = await conn.QueryAsync<User, UserSchema, Role, User>(
                 query,
-                (user, userSchema) =>
+                (user, userSchema, role) =>
                 {
                     if (!userDictionary.TryGetValue(user.Id, out var currentUser))
                     {
                         currentUser = user;
                         currentUser.Schemas = new List<UserSchema>();
+                        // Assign role name from the Role object if available.
+                        if (role != null)
+                        {
+                            currentUser.RoleName = role.Name;
+                        }
                         userDictionary.Add(user.Id, currentUser);
                     }
 
-                    // Only add schema if it exists (it can be null if no mapping is found)
-                    // Using the alias "SchemaUserId" in the query to split the mapping
+                    // Add the schema if it exists.
                     if (userSchema != null && !string.IsNullOrEmpty(userSchema.SchemaName))
                     {
                         currentUser?.Schemas?.Add(userSchema);
                     }
+
                     return currentUser;
                 },
                 new { Email = email },
-                splitOn: "SchemaUserId" // Tells Dapper where to split the result between User and UserSchema objects.
+                splitOn: "SchemaUserId,Id" // Splits: UserSchema starts at SchemaUserId; Role starts at Id.
             );
 
             var userResult = userDictionary.Values.FirstOrDefault();
 
-            if (BCrypt.Net.BCrypt.Verify(password, userResult?.PasswordHash))
+            // Verify the password if a user was found.
+            if (userResult != null && BCrypt.Net.BCrypt.Verify(password, userResult.PasswordHash))
             {
                 return userResult;
             }
 
             return null;
         }
+
+
 
         public async Task<string?> RegisterUser(string email, string username, string password, string role, List<string>? schemas)
         {
