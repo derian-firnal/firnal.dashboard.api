@@ -13,11 +13,15 @@ namespace firnal.dashboard.services
     {
         private readonly IAuthRepository _authRepository;
         private readonly string _jwtSecret;
+        private readonly string _jwtIssuer;
+        private readonly string _jwtAudience;
 
         public AuthService(IConfiguration config, IAuthRepository authRepository)
         {
             _authRepository = authRepository;
             _jwtSecret = config["JwtSettings:Secret"] ?? throw new Exception("jwtSecret string not found.");
+            _jwtIssuer = config["JwtSettings:Issuer"] ?? throw new Exception("jwtIssuer string not found.");
+            _jwtAudience = config["JwtSettings:Audience"] ?? throw new Exception("jwtAudience string not found.");
         }
 
         public async Task<string?> AuthenticateUser(string email, string password)
@@ -62,15 +66,15 @@ namespace firnal.dashboard.services
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var token = new JwtSecurityToken(
-                issuer: "firnalDashboard",
-                audience: "firnalDashboard",
+                issuer: _jwtIssuer,
+                audience: _jwtAudience,
                 claims: claims,
                 expires: DateTime.UtcNow.AddHours(2),
                 signingCredentials: creds
             );
 
             // Wrap the generated token string in a Task
-            return Task.FromResult(new JwtSecurityTokenHandler().WriteToken(token));
+            return Task.FromResult("Bearer " + new JwtSecurityTokenHandler().WriteToken(token));
         }
     }
 }

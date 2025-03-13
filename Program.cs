@@ -1,3 +1,4 @@
+using firnal.dashboard.api;
 using firnal.dashboard.data;
 using firnal.dashboard.repositories;
 using firnal.dashboard.repositories.Interfaces;
@@ -23,9 +24,15 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 
 builder.Services.AddControllers();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+
+// JWT Bearer authentication configuration
+builder.AddJWT();
+
+// Swagger with JWT configuration
+builder.AddSwaggerGen();
 
 builder.Services.AddCors(options =>
 {
@@ -41,6 +48,8 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 
 app.UseCors("AllowAllOrigins"); // Enable CORS globally
+
+app.UseAuthentication();
 
 // Enable Swagger for Production (Railway)
 if (app.Environment.IsDevelopment() || !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("PORT")))
