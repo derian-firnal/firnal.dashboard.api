@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace firnal.dashboard.api.Controllers
 {
@@ -20,9 +21,10 @@ namespace firnal.dashboard.api.Controllers
         [HttpGet("GetAll")]
         public async Task<IActionResult> GetAll()
         {
-            var all = await _schemaService.GetAll();
+           var userEmail = User.FindFirst(ClaimTypes.Email)?.Value;
 
-            return Ok(all);
+            var schemas = await _schemaService.GetSchemaForUserId(userEmail);
+            return Ok(schemas);
         }
     }
 }
