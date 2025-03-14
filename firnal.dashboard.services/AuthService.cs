@@ -24,15 +24,17 @@ namespace firnal.dashboard.services
             _jwtAudience = config["JwtSettings:Audience"] ?? throw new Exception("jwtAudience string not found.");
         }
 
-        public async Task<string?> AuthenticateUser(string email, string password)
+        public async Task<User?> AuthenticateUser(string email, string password)
         {
             var user = await _authRepository.AuthenticateUser(email, password);
 
             if (user != null)
-                return await GenerateJwtToken(user);
+            {
+                user.JwtToken = await GenerateJwtToken(user);
+                return user;
+            }
 
-            return string.Empty;
-
+            return null;
         }
 
         public async Task<string?> RegisterUser(string email, string username, string password, string role, List<string>? schemas)
