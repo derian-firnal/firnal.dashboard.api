@@ -1,85 +1,33 @@
 ﻿using Dapper;
 using firnal.dashboard.data;
 using firnal.dashboard.repositories.Interfaces;
-using Org.BouncyCastle.Asn1.X509;
 
 namespace firnal.dashboard.repositories
 {
     public class AuthRepository : IAuthRepository
     {
         private readonly SnowflakeDbConnectionFactory _dbFactory;
+        private readonly IUserRepository _userRepository;
+
         private const string DbName = "OUTREACHGENIUS_DRIPS";
         private const string SchemaName = "PUBLIC";
 
-        public AuthRepository(SnowflakeDbConnectionFactory dbFactory)
+        public AuthRepository(SnowflakeDbConnectionFactory dbFactory, IUserRepository userRepository)
         {
             _dbFactory = dbFactory;
+            _userRepository = userRepository;
         }
 
         public async Task<User?> AuthenticateUser(string email, string password)
         {
-            using var conn = _dbFactory.GetConnection();
-
-            // Updated query: selecting r.Id and r.Name without aliasing.
-            string query = $@"
-                SELECT 
-                    u.Id, 
-                    u.UserName, 
-                    u.Email, 
-                    u.PasswordHash,
-                    us.UserId AS SchemaUserId, 
-                    us.SchemaName,
-                    r.Id,
-                    r.Name
-                FROM {DbName}.{SchemaName}.Users u
-                LEFT JOIN {DbName}.{SchemaName}.UserSchemas us ON u.Id = us.UserId
-                LEFT JOIN {DbName}.{SchemaName}.UserRoles ur ON u.Id = ur.UserId
-                LEFT JOIN {DbName}.{SchemaName}.Roles r ON ur.RoleId = r.Id
-                WHERE u.Email = :Email";
-
-            // Dictionary to group user rows (when a user has multiple schemas)
-            var userDictionary = new Dictionary<string, User>();
-
-            var result = await conn.QueryAsync<User, UserSchema, Role, User>(
-                query,
-                (user, userSchema, role) =>
-                {
-                    if (!userDictionary.TryGetValue(user.Id, out var currentUser))
-                    {
-                        currentUser = user;
-                        currentUser.Schemas = new List<UserSchema>();
-                        // Assign role name from the Role object if available.
-                        if (role != null)
-                        {
-                            currentUser.RoleName = role.Name;
-                        }
-                        userDictionary.Add(user.Id, currentUser);
-                    }
-
-                    // Add the schema if it exists.
-                    if (userSchema != null && !string.IsNullOrEmpty(userSchema.SchemaName))
-                    {
-                        currentUser?.Schemas?.Add(userSchema);
-                    }
-
-                    return currentUser;
-                },
-                new { Email = email },
-                splitOn: "SchemaUserId,Id" // Splits: UserSchema starts at SchemaUserId; Role starts at Id.
-            );
-
-            var userResult = userDictionary.Values.FirstOrDefault();
-
+            var user = await _userRepository.GetUserByEmail(email);
+            
             // Verify the password if a user was found.
-            if (userResult != null && BCrypt.Net.BCrypt.Verify(password, userResult.PasswordHash))
-            {
-                return userResult;
-            }
+            if (user != null && BCrypt.Net.BCrypt.Verify(password, user.PasswordHash))
+                return user;
 
             return null;
         }
-
-
 
         public async Task<string?> RegisterUser(string email, string username, string password, string role, List<string>? schemas)
         {
@@ -155,8 +103,9 @@ namespace firnal.dashboard.repositories
             }
         }
 
-
-
-
+        public Task<List<string>> GetSchemasForUser(string userId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
