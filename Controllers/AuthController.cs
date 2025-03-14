@@ -59,14 +59,12 @@ namespace firnal.dashboard.api.Controllers
 
             try
             {
-                var jwtToken = await _authService.AuthenticateUser(request.Email, request.Password);
+                var user = await _authService.AuthenticateUser(request.Email, request.Password);
 
-                if (string.IsNullOrEmpty(jwtToken))
-                {
+                if (user == null)
                     return Unauthorized("Invalid credentials.");
-                }
 
-                return Ok(new { Token = jwtToken });
+                return Ok(new { User = user });
             }
             catch (Exception ex)
             {
