@@ -34,7 +34,7 @@ namespace firnal.dashboard.repositories
             //}
 
             using var conn = _dbFactory.GetConnection();
-            var sql = $"SELECT first_name, last_name, personal_phone, gender, age_range, income_range, net_worth FROM {DbName}.{schemaName}.campaign";
+            var sql = $"SELECT first_name, last_name, mobile_phone, gender, age_range, income_range, net_worth FROM {DbName}.{schemaName}.campaign";
             var result = await conn.QueryAsync<CampaignUserDetails>(sql);
             var details = result.ToList();
 
