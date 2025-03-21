@@ -92,7 +92,7 @@ namespace firnal.dashboard.api.Controllers
             return Ok(topicBreakdown);
         }
 
-        [HttpGet("GetProfessionBreakdown")]
+        [HttpGet("GetProfessionalBreakdown")]
         public async Task<IActionResult> GetProfessionBreakdown(string schemaName)
         {
             var professionBreakdown = await _campaignService.GetProfessionBreakdown(schemaName);
