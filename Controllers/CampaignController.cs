@@ -70,5 +70,12 @@ namespace firnal.dashboard.api.Controllers
             var genderDistribution = await _campaignService.GetGenderVariance(schemaName);
             return Ok(genderDistribution);
         }
+
+        [HttpGet("GetAverageIncome")]
+        public async Task<IActionResult> GetAverageIncome(string schemaName)
+        {
+            var averageIncome = await _campaignService.GetAverageIncome(schemaName);
+            return Ok(averageIncome);
+        }
     }
 }

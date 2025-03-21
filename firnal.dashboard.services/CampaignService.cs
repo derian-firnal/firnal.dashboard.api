@@ -40,6 +40,11 @@ namespace firnal.dashboard.services
             return bytes;
         }
 
+        public async Task<int> GetAverageIncome(string schemaName)
+        {
+            return await _campaignRepository.GetAverageIncome(schemaName);
+        }
+
         public async Task<List<CampaignUserDetails>> GetCampaignUserDetailsAsync(string schemaName)
         {
             return await _campaignRepository.GetCampaignUserDetailsAsync(schemaName);

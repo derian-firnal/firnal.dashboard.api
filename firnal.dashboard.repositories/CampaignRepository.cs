@@ -204,5 +204,35 @@ namespace firnal.dashboard.repositories
                 return new GenderVariance();
             }
         }
+
+        public async Task<int> GetAverageIncome(string schemaName)
+        {
+            try
+            {
+                var sql = $@" SELECT ROUND(
+                                     AVG(
+                                       CASE 
+                                         WHEN INCOME_RANGE ILIKE '% to %' THEN 
+                                           (
+                                             TO_NUMBER(REPLACE(REPLACE(SPLIT_PART(INCOME_RANGE, ' to ', 1), '$', ''), ',', '')) +
+                                             TO_NUMBER(REPLACE(REPLACE(SPLIT_PART(INCOME_RANGE, ' to ', 2), '$', ''), ',', ''))
+                                           ) / 2
+                                         WHEN INCOME_RANGE ILIKE '%+%' THEN 
+                                           TO_NUMBER(REPLACE(REPLACE(REPLACE(INCOME_RANGE, '$', ''), '+', ''), ',', ''))
+                                         ELSE NULL
+                                       END
+                                     ), 0) AS avg_income
+                            FROM {DbName}.{schemaName}.CAMPAIGN;";
+
+                using var conn = _dbFactory.GetConnection();
+                var result = await conn.QuerySingleAsync<int>(sql);
+
+                return result;
+            }
+            catch
+            {
+                return 0;
+            }
+        }
     }
 }
