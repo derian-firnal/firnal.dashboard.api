@@ -284,10 +284,17 @@ namespace firnal.dashboard.repositories
             try
             {
                 var sql = $@"SELECT
-                              job_title,
+                              CASE 
+                                WHEN TRIM(job_title) = '' THEN 'N/A'
+                                ELSE job_title
+                              END AS profession,
                               COUNT(*) AS count
                             FROM {DbName}.{schemaName}.CAMPAIGN
-                            GROUP BY job_title
+                            GROUP BY
+                              CASE 
+                                WHEN TRIM(job_title) = '' THEN 'N/A'
+                                ELSE job_title
+                              END
                             ORDER BY count DESC;";
 
                 using var conn = _dbFactory.GetConnection();
