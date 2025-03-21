@@ -91,5 +91,12 @@ namespace firnal.dashboard.api.Controllers
             var topicBreakdown = await _campaignService.GetTopicBreakdown(schemaName);
             return Ok(topicBreakdown);
         }
+
+        [HttpGet("GetProfessionBreakdown")]
+        public async Task<IActionResult> GetProfessionBreakdown(string schemaName)
+        {
+            var professionBreakdown = await _campaignService.GetProfessionBreakdown(schemaName);
+            return Ok(professionBreakdown);
+        }
     }
 }

@@ -278,5 +278,27 @@ namespace firnal.dashboard.repositories
                 return new List<TopicData>();
             }
         }
+
+        public async Task<List<ProfessionData>> GetProfessionBreakdown(string schemaName)
+        {
+            try
+            {
+                var sql = $@"SELECT
+                              job_title,
+                              COUNT(*) AS count
+                            FROM {DbName}.{schemaName}.CAMPAIGN
+                            GROUP BY job_title
+                            ORDER BY count DESC;";
+
+                using var conn = _dbFactory.GetConnection();
+                var result = await conn.QueryAsync<ProfessionData>(sql);
+
+                return result.ToList();
+            }
+            catch
+            {
+                return new List<ProfessionData>();
+            }
+        }
     }
 }

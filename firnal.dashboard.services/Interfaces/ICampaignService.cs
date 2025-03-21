@@ -14,5 +14,6 @@ namespace firnal.dashboard.services.Interfaces
         Task<int> GetAverageIncome(string schemaName);
         Task<List<AgeRange>> GetAgeRange(string schemaName);
         Task<List<TopicData>> GetTopicBreakdown(string schemaName);
+        Task<List<ProfessionData>> GetProfessionBreakdown(string schemaName);
     }
 }
