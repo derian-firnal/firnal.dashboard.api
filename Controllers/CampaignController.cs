@@ -77,5 +77,12 @@ namespace firnal.dashboard.api.Controllers
             var averageIncome = await _campaignService.GetAverageIncome(schemaName);
             return Ok(averageIncome);
         }
+
+        [HttpGet("GetAgeRange")]
+        public async Task<IActionResult> GetAgeRange(string schemaName)
+        {
+            var ageRange = await _campaignService.GetAgeRange(schemaName);
+            return Ok(ageRange);
+        }
     }
 }

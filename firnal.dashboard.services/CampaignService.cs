@@ -14,6 +14,11 @@ namespace firnal.dashboard.services
             _campaignRepository = campaignRepository;
         }
 
+        public async Task<List<AgeRange>> GetAgeRange(string schemaName)
+        {
+            return await _campaignRepository.GetAgeRange(schemaName);
+        }
+
         public async Task<byte[]> GetAll(string schemaName)
         {
             var result = await _campaignRepository.GetAll(schemaName);

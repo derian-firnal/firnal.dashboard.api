@@ -12,5 +12,6 @@ namespace firnal.dashboard.repositories.Interfaces
         Task<List<UsageData>> GetNewUsersOverPast7Days(string schemaName);
         Task<GenderVariance> GetGenderVariance(string schemaName);
         Task<int> GetAverageIncome(string schemaName);
+        Task<List<AgeRange>> GetAgeRange(string schemaName);
     }
 }

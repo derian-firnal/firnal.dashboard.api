@@ -2,7 +2,6 @@
 using firnal.dashboard.data;
 using firnal.dashboard.repositories.Interfaces;
 using Microsoft.Extensions.Caching.Memory;
-using System.Linq.Expressions;
 
 namespace firnal.dashboard.repositories
 {
@@ -232,6 +231,29 @@ namespace firnal.dashboard.repositories
             catch
             {
                 return 0;
+            }
+        }
+
+        public async Task<List<AgeRange>> GetAgeRange(string schemaName)
+        {
+            try
+            {
+                var sql = $@"SELECT
+                              age_range,
+                              COUNT(*) AS count
+                            FROM {DbName}.{schemaName}.CAMPAIGN
+                            GROUP BY age_range
+                            ORDER BY count DESC;
+                            ";
+
+                using var conn = _dbFactory.GetConnection();
+                var result = await conn.QueryAsync<AgeRange>(sql);
+
+                return result.ToList();
+            }
+            catch
+            {
+                return new List<AgeRange>();
             }
         }
     }
