@@ -84,5 +84,12 @@ namespace firnal.dashboard.api.Controllers
             var ageRange = await _campaignService.GetAgeRange(schemaName);
             return Ok(ageRange);
         }
+
+        [HttpGet("GetTopicBreakdown")]
+        public async Task<IActionResult> GetTopicBreakdown(string schemaName)
+        {
+            var topicBreakdown = await _campaignService.GetTopicBreakdown(schemaName);
+            return Ok(topicBreakdown);
+        }
     }
 }

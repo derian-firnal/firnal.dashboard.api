@@ -256,5 +256,27 @@ namespace firnal.dashboard.repositories
                 return new List<AgeRange>();
             }
         }
+
+        public async Task<List<TopicData>> GetTopicBreakdown(string schemaName)
+        {
+            try
+            {
+                var sql = $@"SELECT
+                              topic,
+                              COUNT(*) AS count
+                            FROM {DbName}.{schemaName}.CAMPAIGN
+                            GROUP BY topic
+                            ORDER BY count DESC;";
+
+                using var conn = _dbFactory.GetConnection();
+                var result = await conn.QueryAsync<TopicData>(sql);
+
+                return result.ToList();
+            }
+            catch
+            {
+                return new List<TopicData>();
+            }
+        }
     }
 }
