@@ -116,7 +116,7 @@ namespace firnal.dashboard.repositories
                             FROM 
                                 {DbName}.{schemaName}.campaign 
                             WHERE 
-                                TO_DATE(SUBSTR(""created_at"", 1, 10), 'DD/MM/YYYY') = CURRENT_DATE;";
+                                TO_DATE(SUBSTR(created_at, 1, 10), 'YYYY-MM-DD') = CURRENT_DATE;";
                 
                 int newUsers = await conn.ExecuteScalarAsync<int>(sql);
                 _cache.Set(cacheKey, newUsers, GetCacheOptionsForMidnight());
