@@ -162,5 +162,47 @@ namespace firnal.dashboard.repositories
                 return new List<UsageData>();
             }
         }
+
+        public async Task<GenderVariance> GetGenderVariance(string schemaName)
+        {
+            try
+            {
+                var sql = $@" SELECT 
+                              CASE 
+                                WHEN gender = 'M' THEN 'Male'
+                                WHEN gender = 'F' THEN 'Female'
+                                ELSE 'Other'
+                              END AS gender_full,
+                              ROUND((COUNT(*) * 100.0) / SUM(COUNT(*)) OVER (), 2) AS percentage
+                            FROM 
+                                {DbName}.{schemaName}.campaign
+                            GROUP BY 
+                              CASE 
+                                WHEN gender = 'M' THEN 'Male'
+                                WHEN gender = 'F' THEN 'Female'
+                                ELSE 'Other'
+                              END;";
+
+                // You can use Query<dynamic> if you don't want to create a temporary class
+                using var conn = _dbFactory.GetConnection();
+                var results = (await conn.QueryAsync(sql)).ToList();
+
+                // Create a new GenderVariance object
+                var genderVariance = new GenderVariance();
+
+                foreach (var row in results)
+                    if (row.gender_full == "Male")
+                        genderVariance.Male = Convert.ToInt32(row.percentage);
+                    else if (row.gender_full == "Female")
+                        genderVariance.Female = Convert.ToInt32(row.percentage);
+
+                // Now genderVariance contains the percentage for Male and Female
+                return genderVariance;
+            }
+            catch
+            {
+                return new GenderVariance();
+            }
+        }
     }
 }

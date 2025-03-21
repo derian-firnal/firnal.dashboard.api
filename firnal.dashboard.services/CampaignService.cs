@@ -50,6 +50,11 @@ namespace firnal.dashboard.services
             return await _campaignRepository.GetDistinctZips(schemaName);
         }
 
+        public async Task<GenderVariance> GetGenderVariance(string schemaName)
+        {
+            return await _campaignRepository.GetGenderVariance(schemaName);
+        }
+
         public async Task<int> GetNewUsersAsync(string schemaName)
         {
             return await _campaignRepository.GetNewUsersAsync(schemaName);

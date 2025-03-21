@@ -10,5 +10,6 @@ namespace firnal.dashboard.repositories.Interfaces
         Task<List<Campaign>> GetAll(string schemaName);
         Task<int> GetNewUsersAsync(string schemaName);
         Task<List<UsageData>> GetNewUsersOverPast7Days(string schemaName);
+        Task<GenderVariance> GetGenderVariance(string schemaName);
     }
 }

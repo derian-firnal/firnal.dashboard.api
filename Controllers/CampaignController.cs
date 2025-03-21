@@ -63,5 +63,12 @@ namespace firnal.dashboard.api.Controllers
             var users = await _campaignService.GetNewUsersOverPast7Days(schemaName);
             return Ok(users);
         }
+
+        [HttpGet("GetGenderDistribution")]
+        public async Task<IActionResult> GetGenderDistribution(string schemaName)
+        {
+            var genderDistribution = await _campaignService.GetGenderVariance(schemaName);
+            return Ok(genderDistribution);
+        }
     }
 }
