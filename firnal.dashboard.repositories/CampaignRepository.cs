@@ -191,10 +191,10 @@ namespace firnal.dashboard.repositories
                 var genderVariance = new GenderVariance();
 
                 foreach (var row in results)
-                    if (row.gender_full == "Male")
-                        genderVariance.Male = Convert.ToInt32(row.percentage);
-                    else if (row.gender_full == "Female")
-                        genderVariance.Female = Convert.ToInt32(row.percentage);
+                    if (row.GENDER_FULL == "Male")
+                        genderVariance.Male = Convert.ToInt32(row.PERCENTAGE);
+                    else if (row.GENDER_FULL == "Female")
+                        genderVariance.Female = Convert.ToInt32(row.PERCENTAGE);
 
                 // Now genderVariance contains the percentage for Male and Female
                 return genderVariance;
