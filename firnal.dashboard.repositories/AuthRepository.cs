@@ -53,7 +53,7 @@ namespace firnal.dashboard.repositories
 
                 if (userResult <= 0) throw new Exception("Failed to insert user.");
 
-                // Step 2: Lookup Role ID using colon-prefixed parameter
+                // Step 2: Lookup Role ID
                 string roleQuery = $@"SELECT ID FROM {DbName}.{SchemaName}.ROLES WHERE NAME = :Name";
 
                 var roleId = await conn.ExecuteScalarAsync<string>(roleQuery, new
@@ -63,7 +63,7 @@ namespace firnal.dashboard.repositories
 
                 if (string.IsNullOrEmpty(roleId)) throw new Exception("Role not found.");
 
-                // Step 3: Insert User Role using colon-prefixed parameters
+                // Step 3: Insert User Role
                 string roleInsertQuery = $@"INSERT INTO {DbName}.{SchemaName}.UserRoles (UserId, RoleId) VALUES (:UserId, :RoleId)";
 
                 int roleResult = await conn.ExecuteAsync(roleInsertQuery, new
@@ -74,7 +74,7 @@ namespace firnal.dashboard.repositories
 
                 if (roleResult <= 0) throw new Exception("Failed to insert user role.");
 
-                // Step 4: Insert User Schema Mappings using colon-prefixed parameters
+                // Step 4: Insert User Schema Mappings
                 string schemaInsertQuery = $@"INSERT INTO {DbName}.{SchemaName}.UserSchemas (UserId, SchemaName) VALUES (:UserId, :SchemaName)";
 
                 if (schemas != null && schemas.Count > 0)
@@ -101,11 +101,6 @@ namespace firnal.dashboard.repositories
                 Console.WriteLine($"Error in RegisterUser: {ex.Message}");
                 return null;
             }
-        }
-
-        public Task<List<string>> GetSchemasForUser(string userId)
-        {
-            throw new NotImplementedException();
         }
     }
 }

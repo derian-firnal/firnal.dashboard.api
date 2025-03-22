@@ -6,6 +6,5 @@ namespace firnal.dashboard.repositories.Interfaces
     {
         Task<string?> RegisterUser(string email, string username, string password, string role, List<string>? schemas);
         Task<User?> AuthenticateUser(string email, string password);
-        Task<List<string>> GetSchemasForUser(string userId);
     }
 }
